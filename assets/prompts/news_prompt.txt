@@ -1,0 +1,32 @@
+Today's date in UTC/GMT timezone is: {current_date_utc}
+
+Provide me with 5 REAL, VERIFIED news stories that were published TODAY (within the last 24 hours from the current UTC date above).
+
+CRITICAL REQUIREMENTS:
+- These MUST be REAL news articles that actually exist and were published today
+- Each article MUST have a working URL to a real news website
+- Do NOT make up or fabricate news stories
+- Do NOT provide old news or news from previous dates
+- All dates should reflect today's date in UTC timezone
+- Include diverse news from major international news sources (BBC, Reuters, CNN, Al Jazeera, etc.)
+
+Return the response ONLY as a valid JSON array with the following structure:
+
+[
+  {
+    "title": "Exact headline from the real news article",
+    "description": "Brief summary of the news (1-2 sentences, based on the actual article)",
+    "date": "ISO 8601 date format in UTC (YYYY-MM-DDTHH:MM:SS.000Z)",
+    "source": "News source name (e.g., BBC News, Reuters, CNN)",
+    "url": "Direct URL to the actual news article"
+  }
+]
+
+IMPORTANT:
+- Return ONLY the JSON array, no additional text, explanation, or markdown formatting
+- Include 5 diverse news stories from different categories (world news, technology, business, sports, science, etc.)
+- Each description should be concise (1-2 sentences maximum)
+- ALL URLs must be real, working links to actual published articles
+- Verify that the news is from TODAY (within last 24 hours UTC)
+- Use reputable international news sources
+- Ensure the JSON is valid and properly formatted

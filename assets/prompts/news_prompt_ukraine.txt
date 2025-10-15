@@ -1,0 +1,33 @@
+Today's date in UTC/GMT timezone is: {current_date_utc}
+
+Provide me with 5 REAL, VERIFIED news stories about UKRAINE that were published TODAY (within the last 24 hours from the current UTC date above).
+
+CRITICAL REQUIREMENTS:
+- These MUST be REAL news articles specifically about Ukraine or events in Ukraine
+- Each article MUST have a working URL to a real news website
+- Focus on Ukrainian domestic news, politics, economy, society, culture, and international relations involving Ukraine
+- Do NOT make up or fabricate news stories
+- Do NOT provide old news or news from previous dates
+- All dates should reflect today's date in UTC timezone
+- Include diverse news from Ukrainian and international sources covering Ukraine (Ukrainska Pravda, Kyiv Independent, BBC Ukraine, Reuters, etc.)
+
+Return the response ONLY as a valid JSON array with the following structure:
+
+[
+  {
+    "title": "Exact headline from the real news article",
+    "description": "Brief summary of the news (1-2 sentences, based on the actual article)",
+    "date": "ISO 8601 date format in UTC (YYYY-MM-DDTHH:MM:SS.000Z)",
+    "source": "News source name (e.g., Ukrainska Pravda, Kyiv Independent, BBC News, Reuters)",
+    "url": "Direct URL to the actual news article"
+  }
+]
+
+IMPORTANT:
+- Return ONLY the JSON array, no additional text, explanation, or markdown formatting
+- Include 5 diverse news stories about Ukraine from different categories (politics, economy, society, defense, culture, international relations, etc.)
+- Each description should be concise (1-2 sentences maximum)
+- ALL URLs must be real, working links to actual published articles about Ukraine
+- Verify that the news is from TODAY (within last 24 hours UTC)
+- Prioritize Ukrainian news sources when available, but also include international coverage
+- Ensure the JSON is valid and properly formatted

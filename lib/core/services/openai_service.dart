@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_app/core/models/news_item.dart';
 import 'package:my_app/core/models/news_region.dart';
+import 'package:my_app/core/models/news_category.dart';
 
 class OpenAIService {
   static const String _apiUrl = 'https://newsapi.org/v2/top-headlines';
@@ -21,7 +22,7 @@ class OpenAIService {
     }
   }
 
-  Future<List<NewsItem>> fetchNews(NewsRegion region) async {
+  Future<List<NewsItem>> fetchNews(NewsRegion region, NewsCategory category) async {
     if (_apiKey == null || _apiKey!.isEmpty) {
       throw Exception(
         'API key not configured. Please add your NewsAPI key to assets/config.json',
@@ -29,7 +30,7 @@ class OpenAIService {
     }
 
     try {
-      // Build query parameters based on region
+      // Build query parameters based on region and category
       final Map<String, String> queryParams = {
         'apiKey': _apiKey!,
         'pageSize': '10', // Get 10 news items
@@ -40,9 +41,33 @@ class OpenAIService {
         queryParams['country'] = 'ua'; // Ukraine country code
       } else {
         // For world news, get top headlines from multiple major countries
-        // or use category instead
+        // We'll use 'us' for general world news
+        queryParams['country'] = 'us';
+      }
+
+      // Add category-specific parameters
+      if (category != NewsCategory.all) {
+        // Map our categories to NewsAPI categories
+        switch (category) {
+          case NewsCategory.sports:
+            queryParams['category'] = 'sports';
+            break;
+          case NewsCategory.politics:
+            queryParams['category'] = 'general'; // NewsAPI doesn't have politics, using general
+            queryParams['q'] = 'politics'; // Add search query
+            break;
+          case NewsCategory.finance:
+            queryParams['category'] = 'business';
+            break;
+          case NewsCategory.science:
+            queryParams['category'] = 'science';
+            break;
+          case NewsCategory.all:
+            queryParams['category'] = 'general';
+            break;
+        }
+      } else {
         queryParams['category'] = 'general';
-        // We can't specify multiple countries in one request, so we'll use category
       }
 
       // Build URL with query parameters

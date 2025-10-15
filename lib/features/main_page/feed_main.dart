@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:my_app/core/l10n/app_localizations.dart';
 import 'package:my_app/core/models/news_region.dart';
+import 'package:my_app/core/models/news_category.dart';
 import 'package:my_app/core/providers/news_provider.dart';
 
 class FeedScreen extends StatefulWidget {
@@ -227,7 +228,54 @@ class _FeedScreenState extends State<FeedScreen> with SingleTickerProviderStateM
                     }).toList(),
                   ),
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 24),
+
+                // Category Chips
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    alignment: WrapAlignment.center,
+                    children: NewsCategory.values.map((category) {
+                      final isSelected = newsProvider.currentCategory == category;
+                      return FilterChip(
+                        label: Text(
+                          category.toDisplayString(l10n.locale.languageCode),
+                          style: TextStyle(
+                            color: isSelected
+                                ? Colors.white
+                                : theme.colorScheme.onSurface,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                          ),
+                        ),
+                        selected: isSelected,
+                        onSelected: (selected) {
+                          if (selected) {
+                            newsProvider.setCategory(category);
+                          }
+                        },
+                        backgroundColor: theme.colorScheme.surface,
+                        selectedColor: theme.colorScheme.primary,
+                        checkmarkColor: Colors.white,
+                        side: BorderSide(
+                          color: isSelected
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.primary.withAlpha(77),
+                          width: 1.5,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        elevation: isSelected ? 4 : 0,
+                        shadowColor: theme.colorScheme.primary.withAlpha(102),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                const SizedBox(height: 32),
 
                 // Animated Button
                 AnimatedBuilder(

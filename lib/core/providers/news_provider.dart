@@ -3,22 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:my_app/core/models/news_item.dart';
 import 'package:my_app/core/models/news_region.dart';
+import 'package:my_app/core/models/news_category.dart';
 import 'package:my_app/core/services/openai_service.dart';
 
 class NewsProvider extends ChangeNotifier {
   static const String _newsArchiveKey = 'news_archive';
   static const String _newsRegionKey = 'news_region';
+  static const String _newsCategoryKey = 'news_category';
 
   final OpenAIService _openAIService = OpenAIService();
   final Map<DateTime, Map<NewsRegion, List<NewsItem>>> _newsArchive = {};
   bool _isLoading = false;
   String? _error;
   NewsRegion _currentRegion = NewsRegion.world;
+  NewsCategory _currentCategory = NewsCategory.all;
 
   Map<DateTime, Map<NewsRegion, List<NewsItem>>> get newsArchive => _newsArchive;
   bool get isLoading => _isLoading;
   String? get error => _error;
   NewsRegion get currentRegion => _currentRegion;
+  NewsCategory get currentCategory => _currentCategory;
 
   Future<void> init() async {
     await _openAIService.init();
@@ -40,6 +44,15 @@ class NewsProvider extends ChangeNotifier {
         _currentRegion = NewsRegion.values.firstWhere(
           (r) => r.name == regionString,
           orElse: () => NewsRegion.world,
+        );
+      }
+
+      // Load category preference
+      final categoryString = prefs.getString(_newsCategoryKey);
+      if (categoryString != null) {
+        _currentCategory = NewsCategory.values.firstWhere(
+          (c) => c.name == categoryString,
+          orElse: () => NewsCategory.all,
         );
       }
 
@@ -83,6 +96,9 @@ class NewsProvider extends ChangeNotifier {
       // Save region preference
       await prefs.setString(_newsRegionKey, _currentRegion.name);
 
+      // Save category preference
+      await prefs.setString(_newsCategoryKey, _currentCategory.name);
+
       // Convert the map to JSON-serializable format
       final Map<String, dynamic> toSave = {};
       _newsArchive.forEach((date, regionsMap) {
@@ -107,13 +123,21 @@ class NewsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> setCategory(NewsCategory category) async {
+    if (_currentCategory == category) return;
+
+    _currentCategory = category;
+    await _saveToStorage();
+    notifyListeners();
+  }
+
   Future<void> fetchLatestNews() async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      final news = await _openAIService.fetchNews(_currentRegion);
+      final news = await _openAIService.fetchNews(_currentRegion, _currentCategory);
 
       // Group news by date and region
       final today = _getDateOnly(DateTime.now());
